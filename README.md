@@ -1,15 +1,10 @@
 <h1 align="center">Francy</h3>
 
 <p align="center">
-This is the repository for the Content Management System Francy.
-<br>
-<br>
-<a  href="https://github.com/aichner/Django-Template/issues/new?template=bug_report.md">Report bug</a>
-
-·
-
-<a  href="https://github.com/aichner/Django-Template/issues/new?template=feature_request.md">Request feature</a>
-
+  This is the repository for the Content Management System Francy (Developed In-House by InspireMedia GmbH).
+  <br>
+  <br>
+  <a  href="https://github.com/aichner/Django-Template/issues/new?template=bug_report.md">Report bug</a> · <a  href="https://github.com/aichner/Django-Template/issues/new?template=feature_request.md">Request feature</a>
 </p>
 
 ## Table of contents
