@@ -31,11 +31,12 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    # Custom Apps
+    # Custom apps
     'user',
     'design',
 
     # Default Django Apps
+    # Default Django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -86,7 +87,7 @@ DATABASES = {
 }
 
 
-# Authentication User Model
+# Authentication User model
 
 AUTH_USER_MODEL = 'user.User'
 
