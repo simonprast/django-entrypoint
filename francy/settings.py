@@ -35,7 +35,14 @@ INSTALLED_APPS = [
     'user',
     'design',
 
-    # Default Django Apps
+    # GraphQL
+    'graphene_django',
+    'graphql_jwt.refresh_token.apps.RefreshTokenConfig',  # Refresh tokens
+    'graphql_auth',
+
+    # Filtering queries
+    'django_filters',
+
     # Default Django apps
     'django.contrib.admin',
     'django.contrib.auth',
@@ -54,6 +61,26 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+GRAPHENE = {
+    'SCHEMA': 'api.schema.schema',
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+    ],
+}
+
+AUTHENTICATION_BACKENDS = [
+    # 'graphql_jwt.backends.JSONWebTokenBackend',
+    'graphql_auth.backends.GraphQLAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+GRAPHQL_JWT = {
+    "JWT_VERIFY_EXPIRATION": True,
+
+    # optional
+    "JWT_LONG_RUNNING_REFRESH_TOKEN": True,
+}
 
 ROOT_URLCONF = 'francy.urls'
 
