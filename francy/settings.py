@@ -35,7 +35,9 @@ INSTALLED_APPS = [
     'user',
     'design',
 
-    # Default Django Apps
+    # REST API
+    'rest_framework',
+
     # Default Django apps
     'django.contrib.admin',
     'django.contrib.auth',
