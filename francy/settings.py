@@ -37,6 +37,7 @@ INSTALLED_APPS = [
 
     # REST API
     'rest_framework',
+    'rest_framework.authtoken',
 
     # Default Django apps
     'django.contrib.admin',
@@ -58,6 +59,19 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'francy.urls'
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
+    # For default, DRF uses Basic Authentication using Username and Password.
+    # We're using TokenAuth for our application.
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
 
 TEMPLATES = [
     {
