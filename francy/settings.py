@@ -27,6 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Whether users are allowed to create user accounts through the endpoint at /users/create/ or not
+ALLOW_REGISTER = True
+
 
 # Application definition
 
