@@ -74,5 +74,10 @@ class User(AbstractBaseUser):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
+    def create_user(username, email, password, *args, **kwargs):
+        user = User(username=username, email=email)
+        user.set_password(password)
+        user.save()
+
     def save(self, *args, **kwargs):
         super(User, self).save(*args, **kwargs)
