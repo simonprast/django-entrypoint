@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .authentication import obtain_auth_token
+from .authentication import obtain_auth_token, refresh_token, remove_token
 
 from ..models import User
 from .serializers import UserSerializer, RegisterUserSerializer
@@ -80,21 +80,6 @@ class UserCreateOrLogin(generics.GenericAPIView):
             return Response({'username': user.username, 'token': token.key}, status=auth_status)
 
 
-# class UserList(APIView):
-#     def get(self, request, format=None):
-#         users = User.objects.all()
-#         serializer = UserSerializer(
-#             users, many=True, context={'request': request})
-#         return Response(serializer.data)
-
-#     def post(self, request, format=None):
-#         serializer = UserSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class UserDetail(mixins.RetrieveModelMixin,
                  mixins.UpdateModelMixin,
                  mixins.DestroyModelMixin,
@@ -111,28 +96,32 @@ class UserDetail(mixins.RetrieveModelMixin,
             raise exceptions.NotFound
 
     def get(self, request, pk, *args, **kwargs):
+        # Get the requested user
         requested_user = self.check_requested_object(pk=pk)
+        # Only allow staff users and own requests
         if request.user.is_staff or requested_user == request.user:
             return self.retrieve(request, *args, **kwargs)
         else:
             raise exceptions.PermissionDenied
 
     def put(self, request, pk, *args, **kwargs):
+        # Get the requested user
         requested_user = self.check_requested_object(pk=pk)
+        # Only allow staff users and own requests
         if request.user.is_staff or requested_user == request.user:
-            password = request.data.get('password', False)
-            if password:
-                requested_user.set_password(password)
-                requested_user.save()
-
+            # This copies the request.data dictionary,
+            # as request.data is read-only.
             altered_request_data = request.data.copy()
 
+            # last_login cannot be altered.
             if altered_request_data.__contains__('last_login'):
                 altered_request_data.pop('last_login')
 
+            # utype can only be altered by administrative accounts.
             if altered_request_data.__contains__('utype') and not request.user.is_staff:
                 altered_request_data.pop('utype')
 
+            # Update the object using the serializer.
             partial = kwargs.pop('partial', False)
             instance = self.get_object()
             serializer = self.get_serializer(
@@ -140,38 +129,24 @@ class UserDetail(mixins.RetrieveModelMixin,
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
 
-            return Response(serializer.data)
+            # Copy the read-only serializer.data dictionary.
+            serializer_data = serializer.data
+
+            # Set a new password if it was sent through the request body
+            password = request.data.get('password', False)
+            if password:
+                requested_user.set_password(password)
+                requested_user.save()
+
+                # If the user who requests the password change is the user itself,
+                # the user is given a new token. If the password is changed by an admin,
+                # the valid login token is deleted.
+                if requested_user == request.user:
+                    token = refresh_token(requested_user)
+                    serializer_data.update({'token': str(token)})
+                else:
+                    remove_token(requested_user)
+
+            return Response(serializer_data)
         else:
             raise exceptions.PermissionDenied
-
-    # def delete(self, request, *args, **kwargs):
-    #     requested_user = self.check_requested_object(pk=pk)
-    #     if request.user.is_staff or requested_user == request.user:
-    #         return self.destroy(request, *args, **kwargs)
-    #     else:
-    #         return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-    # class UserDetail(APIView):
-    #     def get_object(self, pk):
-    #         try:
-    #             user = User.objects.get(pk=pk)
-    #         except User.DoesNotExist:
-    #             return Response(status=status.HTTP_404_NOT_FOUND)
-
-    #     def get(self, request, pk, format=None):
-    #         user = self.get_object(pk)
-    #         serializer = UserSerializer(user)
-    #         return Response(serializer.data)
-
-    #     def put(self, request, pk, format=None):
-    #         user = self.get_object(pk)
-    #         serializer = UserSerializer(user, data=request.data)
-    #         if serializer.is_valid():
-    #             serializer.save()
-    #             return Response(serializer.data)
-    #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    #     def delete(self, request, pk, format=None):
-    #         user = self.get_object(pk)
-    #         user.delete()
-    #         return Response(status=status.HTTP_204_NO_CONTENT)
