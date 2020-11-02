@@ -10,3 +10,13 @@ def obtain_auth_token(username, password):
         token, created = Token.objects.get_or_create(user=user)
         return token, created, user
     return None, None, None
+
+
+def remove_token(user):
+    Token.objects.filter(user=user).delete()
+
+
+def refresh_token(user):
+    remove_token(user)
+    token = Token.objects.create(user=user)
+    return token
