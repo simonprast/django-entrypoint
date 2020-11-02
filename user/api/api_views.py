@@ -23,17 +23,20 @@ class UserList(mixins.ListModelMixin,
             user = User.objects.get(pk=pk)
             return user
         except User.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            raise exceptions.NotFound
 
     def get(self, request, *args, **kwargs):
+        # A staff user is allowed to see all users
         if request.user.is_staff:
             return self.list(request, *args, **kwargs)
+        # AnonymousUsers are denied.
+        # If the User is not anonymous, only show the requesting user himself.
         elif not request.user.is_anonymous:
             user = self.get_object(request.user.id)
             serializer = UserSerializer(user)
             return Response(serializer.data)
         else:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+            exceptions.PermissionDenied
 
 
 class UserCreateOrLogin(generics.GenericAPIView):
