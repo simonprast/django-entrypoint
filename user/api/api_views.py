@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 
-from rest_framework import status, mixins, generics, permissions
+from rest_framework import exceptions, generics, mixins, permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -43,7 +43,7 @@ class UserCreateOrLogin(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         if not request.user.is_anonymous:
             # Deny any request thats not from an AnonymousUser
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'You cannot create an account while authenticated.'}, status=status.HTTP_403_FORBIDDENe)
         else:
             serializer = RegisterUserSerializer(data=request.data)
 
@@ -105,21 +105,21 @@ class UserDetail(mixins.RetrieveModelMixin,
             user = User.objects.get(pk=pk)
             return user
         except User.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            raise exceptions.NotFound
 
     def get(self, request, pk, *args, **kwargs):
         requested_user = self.check_requested_object(pk=pk)
         if request.user.is_staff or requested_user == request.user:
             return self.retrieve(request, *args, **kwargs)
         else:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+            raise exceptions.PermissionDenied
 
     def put(self, request, *args, **kwargs):
         requested_user = self.check_requested_object(pk=pk)
         if request.user.is_staff or requested_user == request.user:
             return self.update(request, *args, **kwargs)
         else:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+            raise exceptions.PermissionDenied
 
     # def delete(self, request, *args, **kwargs):
     #     requested_user = self.check_requested_object(pk=pk)
