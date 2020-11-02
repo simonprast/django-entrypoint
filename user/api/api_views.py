@@ -35,10 +35,6 @@ class UserList(mixins.ListModelMixin,
         else:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-    def post(self, request, *args, **kwargs):
-        if request.user is not None:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
 
 class UserCreateOrLogin(generics.GenericAPIView):
     serializer_class = RegisterUserSerializer
