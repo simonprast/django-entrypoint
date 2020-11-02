@@ -114,10 +114,30 @@ class UserDetail(mixins.RetrieveModelMixin,
         else:
             raise exceptions.PermissionDenied
 
-    def put(self, request, *args, **kwargs):
+    def put(self, request, pk, *args, **kwargs):
         requested_user = self.check_requested_object(pk=pk)
         if request.user.is_staff or requested_user == request.user:
-            return self.update(request, *args, **kwargs)
+            password = request.data.get('password', False)
+            if password:
+                requested_user.set_password(password)
+                requested_user.save()
+
+            altered_request_data = request.data.copy()
+
+            if altered_request_data.__contains__('last_login'):
+                altered_request_data.pop('last_login')
+
+            if altered_request_data.__contains__('utype') and not request.user.is_staff:
+                altered_request_data.pop('utype')
+
+            partial = kwargs.pop('partial', False)
+            instance = self.get_object()
+            serializer = self.get_serializer(
+                instance, data=altered_request_data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+
+            return Response(serializer.data)
         else:
             raise exceptions.PermissionDenied
 
