@@ -8,8 +8,6 @@ class UserManager(BaseUserManager):
         utype = kwargs.get("utype", 1)
         is_staff = kwargs.get("is_staff", False)
 
-        print(str(utype))
-
         if not username:
             raise ValueError("Users must have an username")
 
