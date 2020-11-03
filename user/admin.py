@@ -1,3 +1,10 @@
+#
+# Created on Mon Nov 02 2020
+#
+# Copyright (c) 2020 - Simon Prast
+#
+
+
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import Group

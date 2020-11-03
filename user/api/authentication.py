@@ -1,3 +1,10 @@
+#
+# Created on Mon Nov 02 2020
+#
+# Copyright (c) 2020 - Simon Prast
+#
+
+
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 

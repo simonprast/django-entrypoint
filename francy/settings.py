@@ -1,3 +1,10 @@
+#
+# Created on Mon Nov 02 2020
+#
+# Copyright (c) 2020 - Simon Prast
+#
+
+
 """
 Django settings for francy project.
 
