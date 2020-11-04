@@ -84,7 +84,11 @@ class UserCreateOrLogin(generics.GenericAPIView):
             # Either the user object was created or the user just logged in
             auth_status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
 
-            return Response({'username': user.username, 'token': token.key}, status=auth_status)
+            # Attach a 'created' confirmation to the return dictionary if the object was just created
+            return_dict = {'username': user.username, 'token': token.key} if not created else {
+                'username': user.username, 'token': token.key, 'created': 'True'}
+
+            return Response(return_dict, status=auth_status)
 
 
 class UserDetail(mixins.RetrieveModelMixin,
