@@ -11,7 +11,9 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 class UserManager(BaseUserManager):
     def create_user(self, username, password, **kwargs):
-        email = kwargs.get("email", None)
+        email_raw = kwargs.get("email", None)
+        email = self.normalize_email(
+            email_raw) if email_raw is not None else None
         utype = kwargs.get("utype", 1)
         is_staff = kwargs.get("is_staff", False)
 
@@ -20,7 +22,7 @@ class UserManager(BaseUserManager):
 
         user = self.model(
             username=username,
-            email=self.normalize_email(email),
+            email=email,
             utype=utype,
         )
 
@@ -78,11 +80,6 @@ class User(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
-
-    def create_user(username, email, password, *args, **kwargs):
-        user = User(username=username, email=email)
-        user.set_password(password)
-        user.save()
 
     def save(self, *args, **kwargs):
         super(User, self).save(*args, **kwargs)

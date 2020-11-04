@@ -24,7 +24,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'password']
 
     def save(self):
-        User.create_user(
+        User.objects.create_user(
             username=self.validated_data.get('username'),
             email=self.validated_data.get('email'),
             password=self.validated_data.get('password')
