@@ -1,7 +1,7 @@
 <h1 align="center">Francy</h3>
 
 <p align="center">
-  This is the repository for the Content Management System Francy (Developed In-House by InspireMedia GmbH).
+  This is the repository for the Content Management System Francy.
   <br>
   <br>
   <a  href="https://github.com/aichner/Django-Template/issues/new?template=bug_report.md">Report bug</a> · <a  href="https://github.com/aichner/Django-Template/issues/new?template=feature_request.md">Request feature</a>
@@ -55,6 +55,6 @@ LinkedIn: [simonprast](https://www.linkedin.com/in/simonprast/)
 
 ## [](#copyright-and-license)Copyright and license
 
-Copyright © 2020 InspireMedia GmbH - All Rights Reserved
+Copyright © 2020 Simon Prast - All Rights Reserved
 _Unauthorized copying of this source code is strictly prohibited.
 Proprietary and confidental._
