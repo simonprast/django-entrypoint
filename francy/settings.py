@@ -1,3 +1,10 @@
+#
+# Created on Mon Nov 02 2020
+#
+# Copyright (c) 2020 - Simon Prast
+#
+
+
 """
 Django settings for francy project.
 
@@ -27,6 +34,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Whether users are allowed to create user accounts through the endpoint at /users/create/ or not
+ALLOW_REGISTER = True
+
 
 # Application definition
 
@@ -35,7 +45,10 @@ INSTALLED_APPS = [
     'user',
     'design',
 
-    # Default Django Apps
+    # REST API
+    'rest_framework',
+    'rest_framework.authtoken',
+
     # Default Django apps
     'django.contrib.admin',
     'django.contrib.auth',
@@ -56,6 +69,19 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'francy.urls'
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
+    # For default, DRF uses Basic Authentication using Username and Password.
+    # We're using TokenAuth for our application.
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
 
 TEMPLATES = [
     {

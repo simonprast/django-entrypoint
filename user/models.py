@@ -1,21 +1,28 @@
+#
+# Created on Mon Nov 02 2020
+#
+# Copyright (c) 2020 - Simon Prast
+#
+
+
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 
 class UserManager(BaseUserManager):
     def create_user(self, username, password, **kwargs):
-        email = kwargs.get("email", None)
+        email_raw = kwargs.get("email", None)
+        email = self.normalize_email(
+            email_raw) if email_raw is not None else None
         utype = kwargs.get("utype", 1)
         is_staff = kwargs.get("is_staff", False)
-
-        print(str(utype))
 
         if not username:
             raise ValueError("Users must have an username")
 
         user = self.model(
             username=username,
-            email=self.normalize_email(email),
+            email=email,
             utype=utype,
         )
 
@@ -73,3 +80,6 @@ class User(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+
+    def save(self, *args, **kwargs):
+        super(User, self).save(*args, **kwargs)
