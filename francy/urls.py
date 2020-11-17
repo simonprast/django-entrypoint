@@ -27,3 +27,6 @@ urlpatterns = [
 
     path('api/', include('user.api.urls')),
 ]
+
+
+create_admin_user()
