@@ -37,6 +37,11 @@ ALLOWED_HOSTS = []
 # Whether users are allowed to create user accounts through the endpoint at /users/create/ or not
 ALLOW_REGISTER = True
 
+ADMIN_USER = 'admin'
+ADMIN_PASSWORD = 'admin'
+
+VERSION = '0.1.0'
+
 
 # Application definition
 
