@@ -27,6 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Whether users are allowed to create user accounts through the API.
+ALLOW_REGISTER = True
+
 
 # Application definition
 
