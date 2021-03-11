@@ -1,12 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 
 class UserManager(BaseUserManager):
     def create_user(self, username, password, **kwargs):
         email = kwargs.get("email", None)
         utype = kwargs.get("utype", 1)
-        is_staff = kwargs.get("is_staff", False)
+        # is_staff = kwargs.get("is_staff", False)
 
         if not username:
             raise ValueError("Users must have an username")
@@ -72,5 +71,14 @@ class User(AbstractBaseUser):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
-    def save(self, *args, **kwargs):
-        super(User, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     super(User, self).save(*args, **kwargs)
+
+
+def create_admin_user():
+    if User.objects.filter(username=settings.ADMIN_USER).exists():
+        User.objects.get(username=settings.ADMIN_USER).set_password(settings.ADMIN_PASSWORD)
+        print("EXISTING ADMIN ACCOUNT (SET ADMIN PASSWORD): " + settings.ADMIN_USER)
+    else:
+        User.objects.create_superuser(settings.ADMIN_USER, settings.ADMIN_PASSWORD)
+        print("CREATE NEW ADMIN ACCOUNT: " + settings.ADMIN_USER)
