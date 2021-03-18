@@ -16,16 +16,18 @@ class UserManager(BaseUserManager):
         utype=1,
         default_superuser=False
     ):
-        # Validate the given email address
-        try:
-            validate_email(email)
-        except exceptions.ValidationError:
-            raise exceptions.ValidationError('Email address is not valid.')
+        # Skip email validation for superusers.
+        if not utype == 9:
+            # Validate the given email address.
+            try:
+                validate_email(email)
+            except exceptions.ValidationError:
+                raise exceptions.ValidationError('Email address is not valid.')
 
-        # Everything beyond the @ of an email address is case-insensitive according to RFC specs.
-        # In practice, no well-known email provider uses case-sensitive username parts.
-        # Therefore, lowercase the email string.
-        email = email.lower()
+            # Everything beyond the @ of an email address is case-insensitive according to RFC specs.
+            # In practice, no well-known email provider uses case-sensitive username parts.
+            # Therefore, lowercase the email string.
+            email = email.lower()
 
         if not username:
             raise exceptions.ValidationError('Users must have an username.')
@@ -60,7 +62,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     username = models.CharField(max_length=40, unique=True)
-    email = models.EmailField(verbose_name='Email Address', null=True, blank=False, max_length=320)
+    email = models.EmailField(verbose_name='Email Address', null=True, blank=True, max_length=320)
     utype = models.IntegerField(verbose_name='User Type', default=0)
     is_admin = models.BooleanField(default=False)
     default_superuser = models.BooleanField(default=False)
@@ -117,14 +119,38 @@ def create_admin_user():
     # already loaded. This function ensures that a default administrative user account exists.
     # Username, email and password are set according to environment variables ADMIN_USER, ADMIN_MAIL and ADMIN_PASSWORD.
 
-    # If a default superuser account already exists, deleted it.
+    # If a default superuser account already exists, use it.
     if User.objects.filter(default_superuser=True).exists():
         user = User.objects.get(default_superuser=True)
 
-        if user.username == settings.ADMIN_USER and user.email == settings.ADMIN_MAIL:
-            user.set_password(settings.ADMIN_PASSWORD)
-            user.save()
-            print(f'{Fore.GREEN}Existing default superuser\'s password successfully updated:')
+        # If the superuser object should be persistent, the existing object is used and updated.
+        # Else, the existing superuser object and its children are deleted.
+        if settings.ADMIN_PERSISTENT:
+            update = False
+            if not user.username == settings.ADMIN_USER:
+                print(f'{Fore.GREEN}Changing existing default superuser\'s name:')
+                print(f'From {user.username} to {settings.ADMIN_USER}{Style.RESET_ALL}')
+
+                user.username = settings.ADMIN_USER
+                update = True
+
+            if not user.email == settings.ADMIN_MAIL:
+                print(f'{Fore.GREEN}Changing existing default superuser\'s email:')
+                print(f'From {user.email} to {settings.ADMIN_MAIL}{Style.RESET_ALL}')
+
+                user.email = settings.ADMIN_MAIL
+                update = True
+
+            if not user.check_password(settings.ADMIN_PASSWORD):
+                print(f'{Fore.GREEN}Updating existing default superuser\'s password.{Style.RESET_ALL}')
+
+                user.set_password(settings.ADMIN_PASSWORD)
+                update = True
+
+            if update:
+                user.save()
+
+            print(f'{Fore.GREEN}Default superuser account:')
             print(f'Username: {settings.ADMIN_USER}')
             print(f'E-Mail: {settings.ADMIN_MAIL}{Style.RESET_ALL}\n')
         else:

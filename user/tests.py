@@ -18,3 +18,10 @@ class TestUserCreation(TestCase):
             password='test123',
             utype=1
         )
+
+        User.objects.create_user(
+            username='TestWithoutEmail',
+            email=None,
+            password='test123',
+            utype=9
+        )

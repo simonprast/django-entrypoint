@@ -33,6 +33,7 @@ ALLOW_REGISTER = True
 ADMIN_USER = 'admin'
 ADMIN_MAIL = 'simon@pra.st'
 ADMIN_PASSWORD = 'admin'
+ADMIN_PERSISTENT = True
 
 VERSION = '0.1.0'
 
