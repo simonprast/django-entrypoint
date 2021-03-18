@@ -13,17 +13,27 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
+from django.db.utils import OperationalError
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 
 from graphene_django.views import GraphQLView
 
+from user.models import create_admin_user
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # GraphQL API
     path('graphql', csrf_exempt(GraphQLView.as_view(graphiql=True))),
-]
 
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-create_admin_user()
+try:
+    create_admin_user()
+except OperationalError:
+    print('COULD NOT CREATE ADMIN USER (is there an un-migrated field on the user model?)')
