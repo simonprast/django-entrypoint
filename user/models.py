@@ -72,8 +72,6 @@ class User(AbstractBaseUser):
     USERNAME_FIELD = 'username'
     EMAIL_FIELD = 'email'
 
-    REQUIRED_FIELDS = []
-
     def __str__(self):
         return self.username
 
@@ -94,20 +92,24 @@ class User(AbstractBaseUser):
 
         super(User, self).save(*args, **kwargs)
 
+    # Needed for Django functionality
     def has_perm(self, perm, obj=None):
         'Does the user have a specific permission?'
         # Simplest possible answer: Yes, always
         return True
 
+    # Needed for Django functionality
     def has_module_perms(self, app_label):
         'Does the user have permissions to view the app `app_label`?'
         # Simplest possible answer: Yes, always
         return True
 
+    # Needed for Django functionality
     @property
     def is_active(self):
         return True
 
+    # Needed for Django functionality
     @property
     def is_staff(self):
         'Is the user a member of staff?'
@@ -154,6 +156,7 @@ def create_admin_user():
 
                 if update:
                     user.save()
+                    # Line break
                     print('')
 
                 print(f'{Fore.BLUE}Default superuser account:')
