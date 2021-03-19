@@ -36,6 +36,7 @@ class UserManager(BaseUserManager):
             username=username,
             email=email,
             utype=utype,
+            default_superuser=default_superuser
         )
 
         user.set_password(password)
