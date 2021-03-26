@@ -1,7 +1,9 @@
-from mail_templated import send_mail, EmailMessage
+from mail_templated import EmailMessage
 from .models import MailModel
 from user.models import User
 from django.core import mail
+
+from francy.settings import DEFAULT_FROM_EMAIL
 
 # Create your views here.
 
@@ -17,6 +19,10 @@ def sendMail(template, from_email, to_email):
     else:
         message = EmailMessage(template, {}, from_email, [to_email])
 
+    if from_email == None or from_email == '':
+        from_email = DEFAULT_FROM_EMAIL
+
+
     message.load_template()
     message.render()
     MailModel.objects.create(
@@ -27,3 +33,4 @@ def sendMail(template, from_email, to_email):
             message = message.body,
         )
     message.send()
+    

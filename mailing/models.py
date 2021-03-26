@@ -5,6 +5,7 @@ from user.models import User
 # Create your models here.
 
 class MailModel(models.Model):
+    date = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     to_email = models.EmailField(blank=False, null=True)
     from_email = models.EmailField(blank=True, null=True)
@@ -12,4 +13,4 @@ class MailModel(models.Model):
     message = models.TextField(null=True)
 
     def __str__(self):
-        return self.user.username
+        return self.to_email
