@@ -7,3 +7,7 @@ Hello {{ user.username }}
 {% block body %}
 This is a plain text message.
 {% endblock %}
+
+{% block html %}
+This is an <strong>html</strong> part.
+{% endblock %}
