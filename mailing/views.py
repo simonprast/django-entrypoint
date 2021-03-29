@@ -13,9 +13,16 @@ def sendMail(template, from_email, to_email):
         user = None
 
     if user is not None:
-        message = EmailMessage(template, {'user': user}, from_email, [user.email])
+        context = {'user': user}
     else:
-        message = EmailMessage(template, {}, from_email, [to_email])
+        context = {}
+
+    message = EmailMessage(
+        template,
+        context,
+        from_email,
+        [to_email]
+    )
 
     if from_email is None:
         from_email = settings.DEFAULT_FROM_EMAIL
@@ -23,11 +30,11 @@ def sendMail(template, from_email, to_email):
     message.load_template()
     message.render()
     MailModel.objects.create(
-            user = user,
-            to_email = to_email,
-            from_email = from_email,
-            subject = message.subject,
-            message = message.body,
-        )
+        user=user,
+        to_email=to_email,
+        from_email=from_email,
+        subject=message.subject,
+        message=message.body,
+    )
+
     message.send()
-    
