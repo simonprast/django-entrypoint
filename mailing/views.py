@@ -27,8 +27,6 @@ def sendMail(template, from_email, to_email):
     if from_email is None:
         from_email = settings.DEFAULT_FROM_EMAIL
 
-    message.load_template()
-    message.render()
     MailModel.objects.create(
         user=user,
         to_email=to_email,
