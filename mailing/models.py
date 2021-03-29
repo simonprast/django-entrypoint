@@ -2,7 +2,6 @@ from django.db import models
 
 from user.models import User
 
-# Create your models here.
 
 class MailModel(models.Model):
     date = models.DateTimeField(auto_now_add=True)
