@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     # Custom apps
     'user',
     'design',
+    'mailing',
 
     # GraphQL
     'graphene_django',
@@ -62,6 +63,9 @@ INSTALLED_APPS = [
 
     # Filtering queries
     'django_filters',
+
+    # Mail
+    'mail_templated',
 
     # Default Django apps
     'django.contrib.admin',
@@ -176,3 +180,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# E-mail configuration
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
