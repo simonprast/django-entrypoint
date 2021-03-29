@@ -12,12 +12,12 @@ def sendMail(template, from_email, to_email):
     except User.DoesNotExist:
         user = None
 
-    if user != None:
+    if user is not None:
         message = EmailMessage(template, {'user': user}, from_email, [user.email])
     else:
         message = EmailMessage(template, {}, from_email, [to_email])
 
-    if from_email == None or from_email == '':
+    if from_email is None:
         from_email = settings.DEFAULT_FROM_EMAIL
 
     message.load_template()
