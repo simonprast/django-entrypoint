@@ -7,9 +7,9 @@ from .models import MailModel
 
 # sendMail sends an email and saves it into the database.
 def sendMail(template, from_email, to_email):
-    try:
+    if User.objects.filter(email=to_email).exists():
         user = User.objects.get(email=to_email)
-    except User.DoesNotExist:
+    else:
         user = None
 
     if user is not None:
